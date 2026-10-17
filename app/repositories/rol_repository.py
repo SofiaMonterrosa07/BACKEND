@@ -41,10 +41,10 @@ class RolRepository:
             conn = self.db.get_connection()
             cursor = conn.cursor()
             query = """
-                INSERT INTO rol (nombre, descripcion) 
-                VALUES (%s, %s) RETURNING id;
+                INSERT INTO rol (nombre, descripcion, estado) 
+                VALUES (%s, %s, %s) RETURNING id;
             """
-            cursor.execute(query, (rol.nombre, rol.descripcion))
+            cursor.execute(query, (rol.nombre, rol.descripcion, rol.estado))
             nuevo_id = cursor.fetchone()['id']
             conn.commit()
             return nuevo_id
@@ -64,11 +64,11 @@ class RolRepository:
             cursor = conn.cursor()
             query = """
                 UPDATE rol 
-                SET nombre = %s, descripcion = %s
+                SET nombre = %s, descripcion = %s, estado = %s
                 WHERE id = %s
                 RETURNING id;
             """
-            cursor.execute(query, (rol.nombre, rol.descripcion, rol_id))
+            cursor.execute(query, (rol.nombre, rol.descripcion, rol.estado, rol_id))
             actualizado = cursor.fetchone()
             conn.commit()
             return actualizado is not None

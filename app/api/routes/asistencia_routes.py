@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException
+from app.api.routes.audit_response import respuesta_con_auditoria
 from app.models.asistencia import Asistencia
 from app.repositories.asistencia_repository import AsistenciaRepository
 
@@ -19,12 +20,12 @@ def obtener_por_id(asistencia_id: int):
 @router.post("/")
 def crear_asistencia(asistencia: Asistencia):
     nuevo_id = repo.crear(asistencia)
-    return {"id": nuevo_id, "message": "Asistencia creada exitosamente"}
+    return respuesta_con_auditoria(repo, nuevo_id, "Asistencia creada exitosamente", incluir_id=True)
 
 @router.put("/{asistencia_id}")
 def actualizar_asistencia(asistencia_id: int, asistencia: Asistencia):
     if repo.actualizar(asistencia_id, asistencia):
-        return {"message": "Asistencia actualizada exitosamente"}
+        return respuesta_con_auditoria(repo, asistencia_id, "Asistencia actualizada exitosamente")
     raise HTTPException(status_code=404, detail="Asistencia no encontrada")
 
 @router.delete("/{asistencia_id}")

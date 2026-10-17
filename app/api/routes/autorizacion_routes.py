@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException
+from app.api.routes.audit_response import respuesta_con_auditoria
 from app.models.autorizacion import Autorizacion
 from app.repositories.autorizacion_repository import AutorizacionRepository
 
@@ -19,12 +20,12 @@ def obtener_por_id(autorizacion_id: int):
 @router.post("/")
 def crear_autorizacion(autorizacion: Autorizacion):
     nuevo_id = repo.crear(autorizacion)
-    return {"id": nuevo_id, "message": "Autorización creada exitosamente"}
+    return respuesta_con_auditoria(repo, nuevo_id, "Autorización creada exitosamente", incluir_id=True)
 
 @router.put("/{autorizacion_id}")
 def actualizar_autorizacion(autorizacion_id: int, autorizacion: Autorizacion):
     if repo.actualizar(autorizacion_id, autorizacion):
-        return {"message": "Autorización actualizada exitosamente"}
+        return respuesta_con_auditoria(repo, autorizacion_id, "Autorización actualizada exitosamente")
     raise HTTPException(status_code=404, detail="Autorización no encontrada")
 
 @router.delete("/{autorizacion_id}")

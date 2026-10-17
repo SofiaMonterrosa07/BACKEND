@@ -41,10 +41,10 @@ class EstudianteRepository:
             conn = self.db.get_connection()
             cursor = conn.cursor()
             query = """
-                INSERT INTO estudiante (usuario_id, codigo_estudiante, grado) 
-                VALUES (%s, %s, %s) RETURNING id;
+                INSERT INTO estudiante (usuario_id, codigo_estudiante, grado, estado) 
+                VALUES (%s, %s, %s, %s) RETURNING id;
             """
-            cursor.execute(query, (estudiante.usuario_id, estudiante.codigo_estudiante, estudiante.grado))
+            cursor.execute(query, (estudiante.usuario_id, estudiante.codigo_estudiante, estudiante.grado, estudiante.estado))
             nuevo_id = cursor.fetchone()['id']
             conn.commit()
             return nuevo_id
@@ -64,11 +64,11 @@ class EstudianteRepository:
             cursor = conn.cursor()
             query = """
                 UPDATE estudiante 
-                SET usuario_id = %s, codigo_estudiante = %s, grado = %s
+                SET usuario_id = %s, codigo_estudiante = %s, grado = %s, estado = %s
                 WHERE id = %s
                 RETURNING id;
             """
-            cursor.execute(query, (estudiante.usuario_id, estudiante.codigo_estudiante, estudiante.grado, estudiante_id))
+            cursor.execute(query, (estudiante.usuario_id, estudiante.codigo_estudiante, estudiante.grado, estudiante.estado, estudiante_id))
             actualizado = cursor.fetchone()
             conn.commit()
             return actualizado is not None

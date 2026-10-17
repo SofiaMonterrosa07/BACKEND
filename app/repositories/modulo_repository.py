@@ -41,10 +41,10 @@ class ModuloRepository:
             conn = self.db.get_connection()
             cursor = conn.cursor()
             query = """
-                INSERT INTO modulo (nombre, descripcion) 
-                VALUES (%s, %s) RETURNING id;
+                INSERT INTO modulo (nombre, descripcion, estado) 
+                VALUES (%s, %s, %s) RETURNING id;
             """
-            cursor.execute(query, (modulo.nombre, modulo.descripcion))
+            cursor.execute(query, (modulo.nombre, modulo.descripcion, modulo.estado))
             nuevo_id = cursor.fetchone()['id']
             conn.commit()
             return nuevo_id
@@ -64,11 +64,11 @@ class ModuloRepository:
             cursor = conn.cursor()
             query = """
                 UPDATE modulo 
-                SET nombre = %s, descripcion = %s
+                SET nombre = %s, descripcion = %s, estado = %s
                 WHERE id = %s
                 RETURNING id;
             """
-            cursor.execute(query, (modulo.nombre, modulo.descripcion, modulo_id))
+            cursor.execute(query, (modulo.nombre, modulo.descripcion, modulo.estado, modulo_id))
             actualizado = cursor.fetchone()
             conn.commit()
             return actualizado is not None

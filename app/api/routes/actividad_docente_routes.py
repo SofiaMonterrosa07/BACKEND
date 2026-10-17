@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException
+from app.api.routes.audit_response import respuesta_con_auditoria
 from app.models.actividad_docente import ActividadDocente
 from app.repositories.actividad_docente_repository import ActividadDocenteRepository
 
@@ -61,10 +62,7 @@ def verificar_disponibilidad(docente_id: int, fecha: str, hora: str):
 def crear_asignacion(data: ActividadDocente):
     try:
         nuevo_id = repo.crear(data)
-        return {
-            "id": nuevo_id, 
-            "message": "Docente asignado a la actividad exitosamente"
-        }
+        return respuesta_con_auditoria(repo, nuevo_id, "Docente asignado a la actividad exitosamente", incluir_id=True)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
@@ -76,17 +74,17 @@ def crear_asignacion(data: ActividadDocente):
 @router.put("/{id}")
 def actualizar_asignacion(id: int, data: ActividadDocente):
     try:
-        if repo.actualizar(id, data):
-            return {"message": "Asignación actualizada exitosamente"}
-        raise HTTPException(status_code=404, detail="Asignación no encontrada")
+        actualizado = repo.actualizar(id, data)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error interno: {str(e)}")
 
-# ============================================
-# 8. ELIMINAR ASIGNACIÓN
-# ============================================
+    if not actualizado:
+        raise HTTPException(status_code=404, detail="Asignación no encontrada")
+
+    return respuesta_con_auditoria(repo, id, "Asignación actualizada exitosamente")
+
 @router.delete("/{id}")
 def eliminar_asignacion(id: int):
     if repo.eliminar(id):

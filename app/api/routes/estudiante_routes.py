@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException
+from app.api.routes.audit_response import respuesta_con_auditoria
 from app.models.estudiante import Estudiante  
 from app.repositories.estudiante_repository import EstudianteRepository  
 
@@ -19,12 +20,12 @@ def obtener_por_id(estudiante_id: int):
 @router.post("/")
 def crear_estudiante(estudiante: Estudiante):
     nuevo_id = repo.crear(estudiante)
-    return {"id": nuevo_id, "message": "Estudiante creado exitosamente"}
+    return respuesta_con_auditoria(repo, nuevo_id, "Estudiante creado exitosamente", incluir_id=True)
 
 @router.put("/{estudiante_id}")
 def actualizar_estudiante(estudiante_id: int, estudiante: Estudiante):
     if repo.actualizar(estudiante_id, estudiante):
-        return {"message": "Estudiante actualizado exitosamente"}
+        return respuesta_con_auditoria(repo, estudiante_id, "Estudiante actualizado exitosamente")
     raise HTTPException(status_code=404, detail="Estudiante no encontrado")
 
 @router.delete("/{estudiante_id}")

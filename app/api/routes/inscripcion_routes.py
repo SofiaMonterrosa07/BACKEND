@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException
+from app.api.routes.audit_response import respuesta_con_auditoria
 from app.models.inscripcion import Inscripcion
 from app.repositories.inscripcion_repository import InscripcionRepository
 
@@ -19,12 +20,12 @@ def obtener_por_id(inscripcion_id: int):
 @router.post("/")
 def crear_inscripcion(inscripcion: Inscripcion):
     nuevo_id = repo.crear(inscripcion)
-    return {"id": nuevo_id, "message": "Inscripción creada exitosamente"}
+    return respuesta_con_auditoria(repo, nuevo_id, "Inscripción creada exitosamente", incluir_id=True)
 
 @router.put("/{inscripcion_id}")
 def actualizar_inscripcion(inscripcion_id: int, inscripcion: Inscripcion):
     if repo.actualizar(inscripcion_id, inscripcion):
-        return {"message": "Inscripción actualizada exitosamente"}
+        return respuesta_con_auditoria(repo, inscripcion_id, "Inscripción actualizada exitosamente")
     raise HTTPException(status_code=404, detail="Inscripción no encontrada")
 
 @router.delete("/{inscripcion_id}")

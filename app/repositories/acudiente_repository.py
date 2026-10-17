@@ -41,14 +41,14 @@ class AcudienteRepository:
             conn = self.db.get_connection()
             cursor = conn.cursor()
             query = """
-                INSERT INTO acudiente (usuario_id, documento, telefono, parentesco) 
-                VALUES (%s, %s, %s, %s) RETURNING id;
+                INSERT INTO acudiente (usuario_id, documento, telefono, parentesco, estado) 
+                VALUES (%s, %s, %s, %s, %s) RETURNING id;
             """
             cursor.execute(query, (
                 acudiente.usuario_id,
                 acudiente.documento,
                 acudiente.telefono,
-                acudiente.parentesco
+                acudiente.parentesco, acudiente.estado
             ))
             nuevo_id = cursor.fetchone()['id']
             conn.commit()
@@ -69,7 +69,7 @@ class AcudienteRepository:
             cursor = conn.cursor()
             query = """
                 UPDATE acudiente 
-                SET usuario_id = %s, documento = %s, telefono = %s, parentesco = %s
+                SET usuario_id = %s, documento = %s, telefono = %s, parentesco = %s, estado = %s
                 WHERE id = %s
                 RETURNING id;
             """
@@ -78,6 +78,7 @@ class AcudienteRepository:
                 acudiente.documento,
                 acudiente.telefono,
                 acudiente.parentesco,
+                acudiente.estado,
                 acudiente_id
             ))
             actualizado = cursor.fetchone()

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException
+from app.api.routes.audit_response import respuesta_con_auditoria
 from app.models.notificacion import Notificacion
 from app.repositories.notificacion_repository import NotificacionRepository
 
@@ -19,12 +20,12 @@ def obtener_por_id(notificacion_id: int):
 @router.post("/")
 def crear_notificacion(notificacion: Notificacion):
     nuevo_id = repo.crear(notificacion)
-    return {"id": nuevo_id, "message": "Notificación creada exitosamente"}
+    return respuesta_con_auditoria(repo, nuevo_id, "Notificación creada exitosamente", incluir_id=True)
 
 @router.put("/{notificacion_id}")
 def actualizar_notificacion(notificacion_id: int, notificacion: Notificacion):
     if repo.actualizar(notificacion_id, notificacion):
-        return {"message": "Notificación actualizada exitosamente"}
+        return respuesta_con_auditoria(repo, notificacion_id, "Notificación actualizada exitosamente")
     raise HTTPException(status_code=404, detail="Notificación no encontrada")
 
 @router.delete("/{notificacion_id}")

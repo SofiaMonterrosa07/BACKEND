@@ -41,13 +41,13 @@ class AsistenciaRepository:
             conn = self.db.get_connection()
             cursor = conn.cursor()
             query = """
-                INSERT INTO asistencia (inscripcion_id, asistio, observacion) 
-                VALUES (%s, %s, %s) RETURNING id;
+                INSERT INTO asistencia (inscripcion_id, asistio, observacion, estado) 
+                VALUES (%s, %s, %s, %s) RETURNING id;
             """
             cursor.execute(query, (
                 asistencia.inscripcion_id, 
                 asistencia.asistio, 
-                asistencia.observacion
+                asistencia.observacion, asistencia.estado
             ))
             nuevo_id = cursor.fetchone()['id']
             conn.commit()
@@ -68,14 +68,15 @@ class AsistenciaRepository:
             cursor = conn.cursor()
             query = """
                 UPDATE asistencia 
-                SET inscripcion_id = %s, asistio = %s, observacion = %s
+                SET inscripcion_id = %s, asistio = %s, observacion = %s, estado = %s
                 WHERE id = %s
                 RETURNING id;
             """
             cursor.execute(query, (
-                asistencia.inscripcion_id, 
-                asistencia.asistio, 
+                asistencia.inscripcion_id,
+                asistencia.asistio,
                 asistencia.observacion,
+                asistencia.estado,
                 asistencia_id
             ))
             actualizado = cursor.fetchone()

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException
+from app.api.routes.audit_response import respuesta_con_auditoria
 from app.models.acudiente import Acudiente
 from app.repositories.acudiente_repository import AcudienteRepository
 
@@ -19,12 +20,12 @@ def obtener_por_id(acudiente_id: int):
 @router.post("/")
 def crear_acudiente(acudiente: Acudiente):
     nuevo_id = repo.crear(acudiente)
-    return {"id": nuevo_id, "message": "Acudiente creado exitosamente"}
+    return respuesta_con_auditoria(repo, nuevo_id, "Acudiente creado exitosamente", incluir_id=True)
 
 @router.put("/{acudiente_id}")
 def actualizar_acudiente(acudiente_id: int, acudiente: Acudiente):
     if repo.actualizar(acudiente_id, acudiente):
-        return {"message": "Acudiente actualizado exitosamente"}
+        return respuesta_con_auditoria(repo, acudiente_id, "Acudiente actualizado exitosamente")
     raise HTTPException(status_code=404, detail="Acudiente no encontrado")
 
 @router.delete("/{acudiente_id}")

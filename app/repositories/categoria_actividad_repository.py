@@ -41,10 +41,10 @@ class CategoriaActividadRepository:
             conn = self.db.get_connection()
             cursor = conn.cursor()
             query = """
-                INSERT INTO categoria_actividad (nombre, descripcion) 
-                VALUES (%s, %s) RETURNING id;
+                INSERT INTO categoria_actividad (nombre, descripcion, estado) 
+                VALUES (%s, %s, %s) RETURNING id;
             """
-            cursor.execute(query, (categoria.nombre, categoria.descripcion))
+            cursor.execute(query, (categoria.nombre, categoria.descripcion, categoria.estado))
             nuevo_id = cursor.fetchone()['id']
             conn.commit()
             return nuevo_id
@@ -64,11 +64,11 @@ class CategoriaActividadRepository:
             cursor = conn.cursor()
             query = """
                 UPDATE categoria_actividad 
-                SET nombre = %s, descripcion = %s
+                SET nombre = %s, descripcion = %s, estado = %s
                 WHERE id = %s
                 RETURNING id;
             """
-            cursor.execute(query, (categoria.nombre, categoria.descripcion, categoria_id))
+            cursor.execute(query, (categoria.nombre, categoria.descripcion, categoria.estado, categoria_id))
             actualizado = cursor.fetchone()
             conn.commit()
             return actualizado is not None

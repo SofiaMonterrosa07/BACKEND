@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException
+from app.api.routes.audit_response import respuesta_con_auditoria
 from app.models.modulo_rol import ModuloRol
 from app.repositories.modulo_rol_repository import ModuloRolRepository
 
@@ -19,12 +20,12 @@ def obtener_por_id(id: int):
 @router.post("/")
 def crear_relacion(data: ModuloRol):
     nuevo_id = repo.crear(data)
-    return {"id": nuevo_id, "message": "Relación módulo-rol creada exitosamente"}
+    return respuesta_con_auditoria(repo, nuevo_id, "Relación módulo-rol creada exitosamente", incluir_id=True)
 
 @router.put("/{id}")
 def actualizar_relacion(id: int, data: ModuloRol):
     if repo.actualizar(id, data):
-        return {"message": "Relación módulo-rol actualizada exitosamente"}
+        return respuesta_con_auditoria(repo, id, "Relación módulo-rol actualizada exitosamente")
     raise HTTPException(status_code=404, detail="Relación módulo-rol no encontrada")
 
 @router.delete("/{id}")

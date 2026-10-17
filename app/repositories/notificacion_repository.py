@@ -46,8 +46,8 @@ class NotificacionRepository:
             cursor = conn.cursor()
             fecha_actual = datetime.now()
             query = """
-                INSERT INTO notificacion (usuario_id, actividad_id, titulo, mensaje, fecha_envio, leida) 
-                VALUES (%s, %s, %s, %s, %s, %s) RETURNING id;
+                INSERT INTO notificacion (usuario_id, actividad_id, titulo, mensaje, fecha_envio, leida, estado) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id;
             """
             cursor.execute(query, (
                 notificacion.usuario_id,
@@ -55,7 +55,7 @@ class NotificacionRepository:
                 notificacion.titulo,
                 notificacion.mensaje,
                 fecha_actual,
-                notificacion.leida
+                notificacion.leida, notificacion.estado
             ))
             nuevo_id = cursor.fetchone()['id']
             conn.commit()
@@ -76,7 +76,7 @@ class NotificacionRepository:
             cursor = conn.cursor()
             query = """
                 UPDATE notificacion 
-                SET usuario_id = %s, actividad_id = %s, titulo = %s, mensaje = %s, leida = %s
+                SET usuario_id = %s, actividad_id = %s, titulo = %s, mensaje = %s, leida = %s, estado = %s
                 WHERE id = %s
                 RETURNING id;
             """
@@ -86,6 +86,7 @@ class NotificacionRepository:
                 notificacion.titulo,
                 notificacion.mensaje,
                 notificacion.leida,
+                notificacion.estado,
                 notificacion_id
             ))
             actualizado = cursor.fetchone()

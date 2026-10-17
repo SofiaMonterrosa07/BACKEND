@@ -127,7 +127,10 @@ class ActividadDocenteRepository:
                     u.id, 
                     u.nombre, 
                     ad.rol_en_actividad,
-                    ad.id as asignacion_id
+                    ad.id as asignacion_id,
+                    ad.estado,
+                    ad.creado,
+                    ad.actualizado
                 FROM actividad_docente ad
                 JOIN usuario u ON ad.docente_id = u.id
                 WHERE ad.actividad_id = %s;
@@ -157,7 +160,10 @@ class ActividadDocenteRepository:
                     a.hora,
                     a.lugar,
                     ad.rol_en_actividad,
-                    ad.id as asignacion_id
+                    ad.id as asignacion_id,
+                    ad.estado,
+                    ad.creado,
+                    ad.actualizado
                 FROM actividad_docente ad
                 JOIN actividad a ON ad.actividad_id = a.id
                 WHERE ad.docente_id = %s
@@ -185,13 +191,13 @@ class ActividadDocenteRepository:
             conn = self.db.get_connection()
             cursor = conn.cursor()
             query = """
-                INSERT INTO actividad_docente (actividad_id, docente_id, rol_en_actividad) 
-                VALUES (%s, %s, %s) RETURNING id;
+                INSERT INTO actividad_docente (actividad_id, docente_id, rol_en_actividad, estado) 
+                VALUES (%s, %s, %s, %s) RETURNING id;
             """
             cursor.execute(query, (
                 data.actividad_id,
                 data.docente_id,
-                data.rol_en_actividad
+                data.rol_en_actividad, data.estado
             ))
             nuevo_id = cursor.fetchone()['id']
             conn.commit()
@@ -219,7 +225,7 @@ class ActividadDocenteRepository:
             cursor = conn.cursor()
             query = """
                 UPDATE actividad_docente 
-                SET actividad_id = %s, docente_id = %s, rol_en_actividad = %s
+                SET actividad_id = %s, docente_id = %s, rol_en_actividad = %s, estado = %s
                 WHERE id = %s
                 RETURNING id;
             """
@@ -227,6 +233,7 @@ class ActividadDocenteRepository:
                 data.actividad_id,
                 data.docente_id,
                 data.rol_en_actividad,
+                data.estado,
                 id
             ))
             actualizado = cursor.fetchone()
